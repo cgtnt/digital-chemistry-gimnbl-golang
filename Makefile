@@ -1,6 +1,6 @@
 build:	
-	@go build -o bin/app
+	@go build -o dist/app
 run: build
-	@./bin/app
+	@./dist/app
 test:
 	@go test -v ./...

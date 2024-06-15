@@ -57,7 +57,8 @@ func (s *PostgresStore) GetByElement(el string) (*Page, error) {
 func (s *PostgresStore) CreatePagesTable() error {
 	query := `create table if not exists pages (
 		id serial primary key,
-		element varchar(30)
+		element varchar(30),
+		content text 
 	)`
 
 	_, err := s.db.Exec(query)
@@ -67,7 +68,7 @@ func (s *PostgresStore) CreatePagesTable() error {
 func scanIntoPage(rows *sql.Rows) (*Page, error) {
 	page := &Page{}
 
-	if err := rows.Scan(&page.Content); err != nil {
+	if err := rows.Scan(&page.ID, &page.Element, &page.Content); err != nil {
 		return nil, err
 	}
 

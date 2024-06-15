@@ -16,5 +16,7 @@ type HTTPServer struct {
 }
 
 type Page struct {
-	Content []byte
+	ID      int
+	Element string
+	Content string
 }

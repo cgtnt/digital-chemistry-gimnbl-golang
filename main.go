@@ -1,12 +1,15 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"log"
-	"os"
 )
 
 func main() {
-	os.Setenv("DB_PASSWORD", "testerpassword")
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	store, err := NewPostgresStore()
 	if err != nil {

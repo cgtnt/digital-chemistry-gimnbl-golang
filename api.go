@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func NewHTTPServer(listenAddr string, store Storage) *HTTPServer {
@@ -16,8 +17,11 @@ func NewHTTPServer(listenAddr string, store Storage) *HTTPServer {
 func (s *HTTPServer) Run() {
 	mux := http.NewServeMux()
 
-	// mux.HandleFunc("/zasluge")
-	mux.HandleFunc("/elementi/{id}", MakeHandlerFunc(s.handleElementRoute))
+	buildHandler := http.FileServer(http.Dir(os.Getenv("BUILD_PATH")))
+	mux.Handle("/", buildHandler)
+
+	mux.HandleFunc("/api/elementi/{id}", MakeHandlerFunc(s.handleElementRoute))
+	mux.Handle("/api/", mux)
 
 	log.Println("App is running")
 	log.Fatal(http.ListenAndServe(":8080", mux))
