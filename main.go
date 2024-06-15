@@ -1,7 +1,18 @@
 package main
 
-import "log"
+import (
+	"log"
+	"os"
+)
 
 func main() {
-	log.Println("App is running")
+	os.Setenv("DB_PASSWORD", "testerpassword")
+
+	store, err := NewPostgresStore()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	server := NewHTTPServer(":8080", store)
+	server.Run()
 }
