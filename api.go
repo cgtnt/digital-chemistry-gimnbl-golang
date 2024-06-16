@@ -41,7 +41,7 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 		section := queryParams.Get("section")
 
 		if section == "general" {
-			tmp := ElementGeneralResponse{Name: "vodonik", Symbol: "H", ImageSource: "images/vodonik.png"}
+			tmp := ElementGeneralResponse{Name: "vodonik", Symbol: "H", ImageSource: "/images/vodonik.png"}
 			return WriteJSON(w, http.StatusOK, tmp)
 		}
 

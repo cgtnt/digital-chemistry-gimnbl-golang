@@ -1,16 +1,23 @@
 import './styles.css';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 import Element from './components/Element';
-
+import PeriodicTable from './components/PeriodicTable';
+import { NotFound } from './components/Errors';
 
 function App() {
   return (
-    <div>
-      <Header />
-      <Element name={"vodonik"}/>      
-      <Footer />
-    </div>
+    <Router>
+      <Routes>
+        <Route exact path="/" element={<PeriodicTable />} />
+        <Route  path="/elementi" element={<PeriodicTable />} />
+        <Route path="/elementi/:name" element={<Element />} />
+        <Route path="*" element={<NotFound/>}/>
+      </Routes>
+    </Router>
   );
 }
 

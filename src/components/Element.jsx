@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Formula, Heading, Paragraph } from './PropertiesComponents';
+import { useParams } from 'react-router-dom';
+import { NotFound, ServerError } from './Errors';
 
 //split into 3 components
-export default function Element({ name }) {
+export default function Element() {
+    const { name } = useParams()
+
     const [activePanel, setActivePanel] = useState("physical")
     const [generalInfo, setGeneralInfo] = useState()
+    const [hasError, setHasError] = useState(false)
 
     useEffect(() => {
         fetchGeneralInfo()
@@ -13,16 +18,28 @@ export default function Element({ name }) {
     async function fetchGeneralInfo() {
         try {
             const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elementi/${name}?section=general`)
+
+            if (!res.ok) {
+                setHasError(true)
+                return
+            }
+
             const info = await res.json()
+            setHasError(false)
             setGeneralInfo(info)
         } catch (err) {
             console.log(err)
+            setHasError(true)
         }
+    }
+
+    if(hasError){
+        return <NotFound />
     }
 
     return (
         <div className="container-element-page">
-            <Info info={generalInfo} /> 
+            <Info info={generalInfo} />
 
             <Buttons setState={setActivePanel} />
 
@@ -97,7 +114,12 @@ function PropertiesBox({ name, activePanel }) {
     }
 
     return (
-        <div className="element-properties-wrapper">
+        <div className="element-properties-wrapper" style={{
+            paddingLeft: "5%",
+            paddingRight: "5%",
+            paddingTop: "3%",
+            marginBottom: "100px"
+        }}>
             {JSONToComponents(content)}
         </div>
     );
