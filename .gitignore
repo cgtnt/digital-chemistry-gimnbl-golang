@@ -33,7 +33,9 @@ go.work.sum
 /coverage
 
 # production
-/build
+/dist
+
+README.md
 
 # misc
 .DS_Store
