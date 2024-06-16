@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Formula, Heading, Paragraph } from './PropertiesComponents';
 
 //split into 3 components
 export default function Element({ name }) {
@@ -65,25 +66,39 @@ function Image({ source }) {
 
 function PropertiesBox({ name, activePanel }) {
     const [content, setContent] = useState()
-
+    console.log(content)
     useEffect(() => {
         async function fetchContent() {
             try {
                 const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elementi/${name}?section=${activePanel}`)
                 const content = await res.json()
-                setContent(content)
+                setContent(content.array)
             } catch (err) {
                 console.log(err)
             }
         }
         fetchContent()
+
     }, [name, activePanel])
 
+    function JSONToComponents(array) {
+        return array?.map((item) => {
+            switch (item.component) {
+                case "formula":
+                    return <Formula>{item.content}</Formula>
+                case "heading":
+                    return <Heading>{item.content}</Heading>
+                case "paragraph":
+                    return <Paragraph>{item.content}</Paragraph>
+                default:
+                    return
+            }
+        })
+    }
 
     return (
         <div className="element-properties-wrapper">
-            {/* logic for hydrating json object w premade components */}
-            {JSON.stringify(content)}
+            {JSONToComponents(content)}
         </div>
     );
 }

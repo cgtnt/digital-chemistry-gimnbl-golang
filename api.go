@@ -31,6 +31,19 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 	if r.Method == "GET" {
 		id := GetId(r)
 		fmt.Println(id)
+		queryParams := GetQueryParams(r)
+		section := queryParams.Get("section")
+
+		if section == "physical" {
+			tmp := make([]ElementContentObject, 5)
+			for i := range tmp {
+				tmp[i].Component = "formula"
+				tmp[i].Content = "content lmao"
+			}
+			a := ElementContentResponse{tmp}
+			return WriteJSON(w, http.StatusOK, a)
+		}
+
 		return WriteJSON(w, http.StatusOK, map[string]string{"id": id})
 	}
 
