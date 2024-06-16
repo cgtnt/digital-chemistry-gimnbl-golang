@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './styles.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -9,7 +8,7 @@ function App() {
   return (
     <div>
       <Header />
-      <Element/>      
+      <Element name={"vodonik"}/>      
       <Footer />
     </div>
   );

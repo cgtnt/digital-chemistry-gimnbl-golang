@@ -1,41 +1,89 @@
+import { useState, useEffect } from 'react';
+
 //split into 3 components
-export default function Element() {
+export default function Element({ name }) {
+    const [activePanel, setActivePanel] = useState("physical")
+    const [generalInfo, setGeneralInfo] = useState()
+
+    useEffect(() => {
+        fetchGeneralInfo()
+    }, [])
+
+    async function fetchGeneralInfo() {
+        try {
+            const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elementi/${name}?section=general`)
+            const info = await res.json()
+            setGeneralInfo(info)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return (
-        <div class="container-element-page">
-            <div class="element-image-wrapper">
-                <section class="hero-section">
-                    <div class="hero-section-wrapper">
-                        <div class="color-background">
-                            <div class="element-wrapper">
-                                <h1 class="element-label" title="placeholder"></h1>
-                                <p class="element-name" title="placeholder"></p>
-                            </div>
-                        </div>
-                        <div class="img-wrapper">
-                            <img class="element-img" src="" />
+        <div className="container-element-page">
+            {/* <Image source={generalInfo.imgSrc} /> set general info here  */}
+
+            <Buttons setState={setActivePanel} />
+
+            <PropertiesBox name={name} activePanel={activePanel} />
+        </div>
+    );
+}
+
+function Buttons({ setState }) {
+    return (
+        <section className="button-section">
+            <div className="button-section-wrapper">
+                <button className="button physical-properties" onClick={() => setState("physical")}>Fiz. svojstva</button>
+                <button className="button chemical-properties" onClick={() => setState("chemical")}> Hem. svojstva</button>
+                <button className="button element-usage" onClick={() => setState("usage")}>Upotreba</button>
+                <button className="button element-reactions" onClick={() => setState("reactions")}>Reakcije</button>
+            </div>
+        </section>
+    );
+}
+
+function Image({ source }) {
+    return (
+        <div className="element-image-wrapper">
+            <section className="hero-section">
+                <div className="hero-section-wrapper">
+                    <div className="color-background">
+                        <div className="element-wrapper">
+                            <h1 className="element-label" title="placeholder" />
+                            <p className="element-name" title="placeholder" />
                         </div>
                     </div>
-                </section>
-            </div>
-
-            <section class="button-section">
-                <div class="button-section-wrapper">
-                    <button class="button physical-properties" >Fiz. svojstva</button>
-                    <button class="button chemical-properties" >Hem. svojstva</button>
-                    <button class="button element-usage" >Upotreba</button>
-                    <button class="button element-reactions" >Reakcije</button>
+                    <div className="img-wrapper">
+                        <img className="element-img" src={source} />
+                    </div>
                 </div>
             </section>
+        </div>
+    );
+}
 
-            <div class="element-properties-wrapper">
-                {/* <section class="general-properties">
-                    <div class="section-wrapper">
-                        <p class="section-text-block"></p>
-                        <p class="section-text-block"></p>
-                        <p class="section-text-block"></p>
-                    </div>
-                </section> */}
-            </div>
+function PropertiesBox({ name, activePanel }) {
+    const [content, setContent] = useState()
+
+    useEffect(() => {
+        async function fetchContent() {
+            try {
+                const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elementi/${name}?section=${activePanel}`)
+                const content = await res.json()
+                setContent(content)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        fetchContent()
+    }, [name, activePanel])
+
+
+    return (
+        <div className="element-properties-wrapper">
+            {/* logic for hydrating json object w premade components */}
+            {JSON.stringify(content)}
         </div>
     );
 }
