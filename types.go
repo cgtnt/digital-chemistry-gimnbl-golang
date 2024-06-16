@@ -6,7 +6,12 @@ import (
 
 type APIFunc func(w http.ResponseWriter, r *http.Request) error
 
-type ElementContentResponse struct {
+type ElementGeneralResponse struct {
+	Name        string `json:"name"`
+	Symbol      string `json:"symbol"`
+	ImageSource string `json:"imageSource"`
+}
+type ElementSectionResponse struct {
 	Array []ElementContentObject `json:"array"`
 }
 
@@ -20,8 +25,9 @@ type APIError struct {
 }
 
 type HTTPServer struct {
-	listenAddr string
-	store      Storage
+	listenAddr   string
+	store        Storage
+	elementsList map[string]string
 }
 
 type Page struct {

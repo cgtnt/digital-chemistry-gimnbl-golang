@@ -22,7 +22,7 @@ export default function Element({ name }) {
 
     return (
         <div className="container-element-page">
-            {/* <Image source={generalInfo.imgSrc} /> set general info here  */}
+            <Info info={generalInfo} /> 
 
             <Buttons setState={setActivePanel} />
 
@@ -44,19 +44,19 @@ function Buttons({ setState }) {
     );
 }
 
-function Image({ source }) {
+function Info({ info }) {
     return (
         <div className="element-image-wrapper">
             <section className="hero-section">
                 <div className="hero-section-wrapper">
                     <div className="color-background">
                         <div className="element-wrapper">
-                            <h1 className="element-label" title="placeholder" />
-                            <p className="element-name" title="placeholder" />
+                            <h1 className="element-label" title="placeholder">{info?.symbol}</h1>
+                            <p className="element-name" title="placeholder">{info?.name}</p>
                         </div>
                     </div>
                     <div className="img-wrapper">
-                        <img className="element-img" src={source} />
+                        <img className="element-img" src={info?.imageSource} />
                     </div>
                 </div>
             </section>

@@ -7,10 +7,11 @@ import (
 	"os"
 )
 
-func NewHTTPServer(listenAddr string, store Storage) *HTTPServer {
+func NewHTTPServer(listenAddr string, store Storage, elist map[string]string) *HTTPServer {
 	return &HTTPServer{
-		listenAddr: listenAddr,
-		store:      store,
+		listenAddr:   listenAddr,
+		store:        store,
+		elementsList: elist,
 	}
 }
 
@@ -31,8 +32,18 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 	if r.Method == "GET" {
 		id := GetId(r)
 		fmt.Println(id)
+
+		if _, ok := s.elementsList[id]; !ok {
+			return fmt.Errorf("not found")
+		}
+
 		queryParams := GetQueryParams(r)
 		section := queryParams.Get("section")
+
+		if section == "general" {
+			tmp := ElementGeneralResponse{Name: "vodonik", Symbol: "H", ImageSource: "images/vodonik.png"}
+			return WriteJSON(w, http.StatusOK, tmp)
+		}
 
 		if section == "physical" {
 			tmp := make([]ElementContentObject, 5)
@@ -40,11 +51,11 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 				tmp[i].Component = "formula"
 				tmp[i].Content = "content lmao"
 			}
-			a := ElementContentResponse{tmp}
+			a := ElementSectionResponse{tmp}
 			return WriteJSON(w, http.StatusOK, a)
 		}
+		return fmt.Errorf("not found")
 
-		return WriteJSON(w, http.StatusOK, map[string]string{"id": id})
 	}
 
 	return fmt.Errorf("method not allowed %s", r.Method)
