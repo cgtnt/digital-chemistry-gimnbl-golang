@@ -15,7 +15,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<PeriodicTable />} />
         <Route  path="/elementi" element={<PeriodicTable />} />
-        <Route  path="/editor" element={<Editor />} />
+        <Route  path="/editor/:name" element={<Editor />} />
         <Route path="/elementi/:name" element={<Element />} />
         <Route path="*" element={<NotFound/>}/>
       </Routes>

@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { Formula, Heading, Paragraph } from './PropertiesComponents';
 import { useParams } from 'react-router-dom';
 import { NotFound, ServerError } from './Errors';
-
+import UploadImage from './UploadImage';
+import Toolbar from './Toolbar';
 //split into 3 components
-export default function Element() {
+export default function Element({ isEditor }) {
     const { name } = useParams()
 
     const [activePanel, setActivePanel] = useState("physical")
@@ -33,35 +34,38 @@ export default function Element() {
         }
     }
 
-    if(hasError){
+    if (hasError) {
         return <NotFound />
     }
 
     return (
-        <div className="container-element-page">
-            <Info info={generalInfo} />
+        <>
+            {isEditor && <Toolbar />}
+            <div className="container-element-page">
+                <Info info={generalInfo} isEditor={isEditor} />
 
-            <Buttons setState={setActivePanel} />
+                <Buttons setContent={setActivePanel} isEditor={isEditor} />
 
-            <PropertiesBox name={name} activePanel={activePanel} />
-        </div>
+                <PropertiesBox name={name} activePanel={activePanel} isEditor={isEditor} />
+            </div>
+        </>
     );
 }
 
-function Buttons({ setState }) {
+function Buttons({ setContent, isEditor }) {
     return (
         <section className="button-section">
             <div className="button-section-wrapper">
-                <button className="button physical-properties" onClick={() => setState("physical")}>Fiz. svojstva</button>
-                <button className="button chemical-properties" onClick={() => setState("chemical")}> Hem. svojstva</button>
-                <button className="button element-usage" onClick={() => setState("usage")}>Upotreba</button>
-                <button className="button element-reactions" onClick={() => setState("reactions")}>Reakcije</button>
+                <button className="button physical-properties" onClick={() => setContent("physical")}>Fiz. svojstva</button>
+                <button className="button chemical-properties" onClick={() => setContent("chemical")}> Hem. svojstva</button>
+                <button className="button element-usage" onClick={() => setContent("usage")}>Upotreba</button>
+                <button className="button element-reactions" onClick={() => setContent("reactions")}>Reakcije</button>
             </div>
         </section>
     );
 }
 
-function Info({ info }) {
+function Info({ info, isEditor }) {
     return (
         <div className="element-image-wrapper">
             <section className="hero-section">
@@ -73,7 +77,11 @@ function Info({ info }) {
                         </div>
                     </div>
                     <div className="img-wrapper">
-                        <img className="element-img" src={info?.imageSource} style={{objectFit: 'cover'}}/>
+                        {isEditor ? (
+                            <UploadImage defaultSrc={info?.imageSource}/>
+                        ) : (
+                            <img className="element-img" src={info?.imageSource} style={{ objectFit: 'cover' }} />
+                        )}
                     </div>
                 </div>
             </section>
@@ -81,7 +89,7 @@ function Info({ info }) {
     );
 }
 
-function PropertiesBox({ name, activePanel }) {
+function PropertiesBox({ name, activePanel, isEditor }) {
     const [content, setContent] = useState()
     console.log(content)
     useEffect(() => {
