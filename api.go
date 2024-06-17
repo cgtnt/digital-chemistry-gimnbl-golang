@@ -9,31 +9,19 @@ import (
 	"strings"
 )
 
-func NewHTTPServer(listenAddr string, store Storage, elist map[string]string) *HTTPServer {
+func NewHTTPServer(listenAddr string, store Storage, elist map[string]string, fs http.Handler) *HTTPServer {
 	return &HTTPServer{
 		listenAddr:   listenAddr,
 		store:        store,
 		elementsList: elist,
+		fileServer:   fs,
 	}
 }
 
 func (s *HTTPServer) Run() {
 	mux := http.NewServeMux()
 
-	fs := http.FileServer(http.Dir(os.Getenv("BUILD_PATH")))
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			fullPath := os.Getenv("BUILD_PATH") + "/" + strings.TrimPrefix(path.Clean(r.URL.Path), "/")
-			_, err := os.Stat(fullPath)
-			if err != nil {
-				if !os.IsNotExist(err) {
-					panic(err)
-				}
-				r.URL.Path = "/"
-			}
-		}
-		fs.ServeHTTP(w, r)
-	})
+	mux.HandleFunc("/", MakeHandlerFunc(s.serveFile))
 
 	mux.HandleFunc("/api/elementi/{id}", MakeHandlerFunc(s.handleElementRoute))
 
@@ -72,4 +60,19 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 	}
 
 	return fmt.Errorf("method not allowed %s", r.Method)
+}
+
+func (s *HTTPServer) serveFile(w http.ResponseWriter, r *http.Request) error {
+	if r.URL.Path != "/" {
+		fullPath := os.Getenv("BUILD_PATH") + "/" + strings.TrimPrefix(path.Clean(r.URL.Path), "/")
+		_, err := os.Stat(fullPath)
+		if err != nil {
+			if !os.IsNotExist(err) {
+				return fmt.Errorf("server error")
+			}
+			r.URL.Path = "/"
+		}
+	}
+	s.fileServer.ServeHTTP(w, r)
+	return nil
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/joho/godotenv"
 	"io"
 	"log"
+	"net/http"
 	"os"
 )
 
@@ -19,6 +20,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fs := http.FileServer(http.Dir(os.Getenv("BUILD_PATH")))
+
 	elist := map[string]string{}
 
 	jsonFile, err := os.Open("elementi.json")
@@ -31,6 +34,6 @@ func main() {
 	bytes, _ := io.ReadAll(jsonFile)
 	json.Unmarshal(bytes, &elist)
 
-	server := NewHTTPServer(":8080", store, elist)
+	server := NewHTTPServer(":8080", store, elist, fs)
 	server.Run()
 }

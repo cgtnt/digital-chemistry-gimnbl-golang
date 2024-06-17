@@ -28,6 +28,7 @@ type HTTPServer struct {
 	listenAddr   string
 	store        Storage
 	elementsList map[string]string
+	fileServer   http.Handler
 }
 
 type Page struct {
