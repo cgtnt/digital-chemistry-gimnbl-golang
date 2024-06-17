@@ -73,7 +73,7 @@ function Info({ info }) {
                         </div>
                     </div>
                     <div className="img-wrapper">
-                        <img className="element-img" src={info?.imageSource} />
+                        <img className="element-img" src={info?.imageSource} style={{objectFit: 'cover'}}/>
                     </div>
                 </div>
             </section>
