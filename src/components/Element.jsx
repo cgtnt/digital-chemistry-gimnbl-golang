@@ -17,7 +17,7 @@ export default function Element() {
 
     async function fetchGeneralInfo() {
         try {
-            const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elementi/${name}?section=general`)
+            const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elements/${name}?section=general`)
 
             if (!res.ok) {
                 setHasError(true)
@@ -87,7 +87,7 @@ function PropertiesBox({ name, activePanel }) {
     useEffect(() => {
         async function fetchContent() {
             try {
-                const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elementi/${name}?section=${activePanel}`)
+                const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elements/${name}?section=${activePanel}`)
                 const content = await res.json()
                 setContent(content.array)
             } catch (err) {

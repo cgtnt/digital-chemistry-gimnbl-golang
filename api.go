@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -23,7 +25,8 @@ func (s *HTTPServer) Run() {
 
 	mux.HandleFunc("/", MakeHandlerFunc(s.serveFile))
 
-	mux.HandleFunc("/api/elementi/{id}", MakeHandlerFunc(s.handleElementRoute))
+	mux.HandleFunc("/api/elements/{id}", MakeHandlerFunc(s.handleElementRoute))
+	mux.HandleFunc("/api/editor/images", MakeHandlerFunc(s.handleUploadFile))
 
 	log.Println("App is running")
 	log.Fatal(http.ListenAndServe(":8080", mux))
@@ -75,4 +78,65 @@ func (s *HTTPServer) serveFile(w http.ResponseWriter, r *http.Request) error {
 	}
 	s.fileServer.ServeHTTP(w, r)
 	return nil
+}
+
+func (s *HTTPServer) handleUploadFile(w http.ResponseWriter, r *http.Request) error {
+	if r.Method == "POST" {
+		if err := r.ParseMultipartForm(int64(20971520)); err != nil {
+			log.Println("[CMS Edit] [File Upload] ", err)
+			return fmt.Errorf("failed saving file")
+		} //20mb po slici max
+
+		r.Body = http.MaxBytesReader(w, r.Body, int64(20971520))
+
+		file, header, err := r.FormFile("file")
+		if err != nil {
+			log.Println("[CMS Edit] [File Upload] ", err)
+			return fmt.Errorf("no file submitted")
+		}
+
+		log.Println("[CMS Edit] Incoming file upload: ", header.Filename)
+
+		headerBuff := make([]byte, 512)
+		if _, err := file.Read(headerBuff); err != nil {
+			log.Println("[CMS Edit] [File Upload] ", err)
+			return fmt.Errorf("failed saving file")
+		}
+
+		if _, err := file.Seek(0, 0); err != nil {
+			log.Println("[CMS Edit] [File Upload] ", err)
+			return fmt.Errorf("failed saving file")
+		}
+
+		if http.DetectContentType(headerBuff) != "image/jpeg" {
+			log.Println("[CMS Edit] [File Upload] Invalid file type")
+			return fmt.Errorf("invalid file type")
+		}
+
+		defer file.Close()
+
+		pwd, err := os.Getwd()
+		if err != nil {
+			log.Println("[CMS Edit] [File Upload] ", err)
+			return fmt.Errorf("failed saving file")
+		}
+
+		dest, err := os.CreateTemp(path.Join(pwd, "/dist/client/build/images/"), "upload*.jpg")
+		if err != nil {
+			log.Println("[CMS Edit] [File Upload] ", err)
+			return fmt.Errorf("failed saving file")
+		}
+
+		if _, err := io.Copy(dest, file); err != nil {
+			log.Println("[CMS Edit] [File Upload] ", err)
+			return fmt.Errorf("failed saving file")
+		}
+
+		reactPath := path.Join("/images", filepath.Base(dest.Name()))
+
+		log.Println("[CMS Edit] Uploaded file: ", dest.Name())
+		return WriteJSON(w, http.StatusCreated, map[string]string{"imageSource": reactPath})
+
+	}
+	return fmt.Errorf("method not allowed %s", r.Method)
 }
