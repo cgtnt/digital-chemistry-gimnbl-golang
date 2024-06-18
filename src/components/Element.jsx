@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Formula, Heading, Paragraph } from './PropertiesComponents';
 import { useParams } from 'react-router-dom';
 import { NotFound, ServerError } from './Errors';
 import UploadImage from './UploadImage';
 import Toolbar from './Toolbar';
+import { EditorContext } from './EditorContext';
 //split into 3 components
-export default function Element({ isEditor }) {
+export default function Element() {
+    const isEditor = useContext(EditorContext)
     const { name } = useParams()
 
     const [activePanel, setActivePanel] = useState("physical")
@@ -42,17 +44,18 @@ export default function Element({ isEditor }) {
         <>
             {isEditor && <Toolbar />}
             <div className="container-element-page">
-                <Info info={generalInfo} isEditor={isEditor} />
+                <Info info={generalInfo} />
 
-                <Buttons setContent={setActivePanel} isEditor={isEditor} />
+                <Buttons setContent={setActivePanel} />
 
-                <PropertiesBox name={name} activePanel={activePanel} isEditor={isEditor} />
+                <PropertiesBox name={name} activePanel={activePanel} />
             </div>
         </>
     );
 }
 
-function Buttons({ setContent, isEditor }) {
+function Buttons({ setContent }) {
+    const isEditor = useContext(EditorContext)
     return (
         <section className="button-section">
             <div className="button-section-wrapper">
@@ -65,7 +68,8 @@ function Buttons({ setContent, isEditor }) {
     );
 }
 
-function Info({ info, isEditor }) {
+function Info({ info }) {
+    const isEditor = useContext(EditorContext)
     return (
         <div className="element-image-wrapper">
             <section className="hero-section">
@@ -78,7 +82,7 @@ function Info({ info, isEditor }) {
                     </div>
                     <div className="img-wrapper">
                         {isEditor ? (
-                            <UploadImage defaultSrc={info?.imageSource}/>
+                            <UploadImage defaultSrc={info?.imageSource} />
                         ) : (
                             <img className="element-img" src={info?.imageSource} style={{ objectFit: 'cover' }} />
                         )}
@@ -89,7 +93,8 @@ function Info({ info, isEditor }) {
     );
 }
 
-function PropertiesBox({ name, activePanel, isEditor }) {
+function PropertiesBox({ name, activePanel }) {
+    const isEditor = useContext(EditorContext)
     const [content, setContent] = useState()
     console.log(content)
     useEffect(() => {
