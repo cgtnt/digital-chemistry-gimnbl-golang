@@ -28,7 +28,9 @@ func (s *HTTPServer) Run() {
 	mux.HandleFunc("/", MakeHandlerFunc(s.serveFile))
 
 	mux.HandleFunc("/api/elements/{id}", MakeHandlerFunc(s.handleElementRoute))
-	mux.HandleFunc("/api/editor/images", MakeHandlerFunc(s.handleUploadFile))
+	mux.HandleFunc("/api/editor/elements/{id}", JWTMiddleware(MakeHandlerFunc(s.handleEditorRoute), s.store))
+	mux.HandleFunc("/api/editor/images", JWTMiddleware(MakeHandlerFunc(s.handleUploadFile), s.store))
+	mux.HandleFunc("/api/login", MakeHandlerFunc(s.handleLogin))
 
 	log.Println("App is running")
 	log.Fatal(http.ListenAndServe(":8080", mux))
@@ -67,6 +69,10 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 		return fmt.Errorf("not found")
 	}
 
+	return fmt.Errorf("method not allowed %s", r.Method)
+}
+
+func (s *HTTPServer) handleEditorRoute(w http.ResponseWriter, r *http.Request) error {
 	if r.Method == "POST" {
 		id := GetId(r)
 		fmt.Println(id)
@@ -91,7 +97,35 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 
 		return WriteJSON(w, http.StatusCreated, map[string]string{"message": "element saved successfully"})
 	}
+
 	return fmt.Errorf("method not allowed %s", r.Method)
+}
+
+func (s *HTTPServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
+	if r.Method != "POST" {
+		return fmt.Errorf("method not allowed")
+	}
+
+	loginRequest := &LoginRequest{}
+	if err := json.NewDecoder(r.Body).Decode(loginRequest); err != nil {
+		return fmt.Errorf("missing username or password")
+	}
+
+	account, err := s.store.GetAccountByUsername(loginRequest.Username)
+	if err != nil {
+		return fmt.Errorf("invalid credentials")
+	}
+
+	if err := validateAccountLogin(account, loginRequest.Password); err != nil {
+		return fmt.Errorf("invalid credentials")
+	}
+
+	tokenString, err := createJWT(account)
+	if err != nil {
+		return fmt.Errorf("failed creating token")
+	}
+
+	return WriteJSON(w, http.StatusOK, map[string]string{"token": tokenString})
 }
 
 func (s *HTTPServer) serveFile(w http.ResponseWriter, r *http.Request) error {

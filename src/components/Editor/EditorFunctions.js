@@ -54,7 +54,7 @@ function editComponentContent(id, input, setContent, content) {
 
 async function savePage(name, generalContent, propertiesContent) {
     try {
-        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elements/${name}`, {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/editor/elements/${name}`, {
             method: "POST",
             body: JSON.stringify({
                 name: name,
@@ -72,6 +72,5 @@ async function savePage(name, generalContent, propertiesContent) {
         console.log(err)
     }
 }
-
 
 export { addComponent, deleteComponent, moveComponent, editComponentContent, savePage } 

@@ -30,8 +30,19 @@ type PropertiesContentObject struct {
 	Content   string `json:"content"`
 }
 
+type AdminAccount struct {
+	ID           int    `json:"id"`
+	Username     string `json:"username"`
+	PasswordHash string `json:"-"`
+	CreatedAt    string `createdAt`
+}
 type APIError struct {
 	Error string `json:"error"`
+}
+
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type HTTPServer struct {

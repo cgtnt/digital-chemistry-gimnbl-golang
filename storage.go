@@ -13,6 +13,7 @@ type Storage interface {
 	GetElementByName(string) (*Element, error)
 	CreateElement(*Element) error
 	DeleteElementById(string) error
+	GetAccountByUsername(string) (*AdminAccount, error)
 }
 
 type PostgresStore struct {
@@ -38,7 +39,13 @@ func NewPostgresStore() (*PostgresStore, error) {
 }
 
 func (s *PostgresStore) Init() error {
-	return s.CreateElementsTable()
+	if err := s.CreateElementsTable(); err != nil {
+		return err
+	}
+	if err := s.CreateAccountsTable(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *PostgresStore) CreateElement(el *Element) error {
@@ -84,6 +91,18 @@ func (s *PostgresStore) DeleteElementById(el string) error {
 	return nil
 }
 
+func (s *PostgresStore) GetAccountByUsername(name string) (*AdminAccount, error) {
+	query := `select * from admins where username=$1;`
+	row := s.db.QueryRow(query, name)
+
+	account, err := scanIntoAccount(row)
+	if err != nil {
+		return nil, err
+	}
+
+	return account, nil
+}
+
 func scanIntoElement(row *sql.Row) (*Element, error) {
 	element := &Element{}
 	generalPropsRaw := new([]uint8)
@@ -104,11 +123,32 @@ func scanIntoElement(row *sql.Row) (*Element, error) {
 	return element, nil
 }
 
+func scanIntoAccount(row *sql.Row) (*AdminAccount, error) {
+	account := &AdminAccount{}
+	if err := row.Scan(&account.ID, &account.Username, &account.PasswordHash, &account.CreatedAt); err != nil {
+		return nil, err
+	}
+
+	return account, nil
+}
+
 func (s *PostgresStore) CreateElementsTable() error {
 	query := `create table if not exists elements (
 		name text primary key,
 		generalproperties json,
 		specificproperties json
+	);`
+
+	_, err := s.db.Exec(query)
+	return err
+}
+
+func (s *PostgresStore) CreateAccountsTable() error {
+	query := `create table if not exists admins (
+		id serial primary key, 
+		username varchar(50),
+		password_hash varchar(256),
+		created_at timestamp	
 	);`
 
 	_, err := s.db.Exec(query)
