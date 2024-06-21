@@ -49,15 +49,23 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 			return WriteJSON(w, http.StatusOK, tmp)
 		}
 
-		if section == "physical" {
-			tmp := make([]ElementContentObject, 5)
+		if section == "properties" {
+			tmp := make([]PropertiesContentObject, 5)
 			for i := range tmp {
 				tmp[i].Component = "formula"
 				tmp[i].Content = "content lmao"
 			}
-			a := ElementSectionResponse{tmp}
+
+			tmp2 := make([]PropertiesContentObject, 5)
+			for i := range tmp2 {
+				tmp2[i].Component = "formula"
+				tmp2[i].Content = "chemical lmao"
+			}
+
+			a := ElementPropertiesResponse{Physical: tmp, Chemical: tmp2, Usage: tmp, Reactions: tmp}
 			return WriteJSON(w, http.StatusOK, a)
 		}
+
 		return fmt.Errorf("not found")
 
 	}

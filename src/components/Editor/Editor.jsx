@@ -1,11 +1,11 @@
-import Element from "./Element";
-import { EditorContext } from "./EditorContext";
+import Element from "../Base/Pages/Element";
+import { EditorContext } from "../Context/EditorContext";
 
 export default function Editor() {
     return (
         <>
             <EditorContext.Provider value={true}>
-                <Element isEditor={true} />
+                <Element />
             </EditorContext.Provider>
         </>
     );

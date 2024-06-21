@@ -4,10 +4,10 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import Element from './components/Element';
-import PeriodicTable from './components/PeriodicTable';
-import { NotFound } from './components/Errors';
-import Editor from './components/Editor';
+import Element from './components/Base/Pages/Element';
+import PeriodicTable from './components/Base/Pages/PeriodicTable';
+import { NotFound } from './components/Base/Pages/Errors';
+import Editor from './components/Editor/Editor';
 
 function App() {
   return (

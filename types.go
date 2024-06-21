@@ -11,11 +11,18 @@ type ElementGeneralResponse struct {
 	Symbol      string `json:"symbol"`
 	ImageSource string `json:"imageSource"`
 }
+
+type ElementPropertiesResponse struct {
+	Physical  []PropertiesContentObject `json:"physical"`
+	Chemical  []PropertiesContentObject `json:"chemical"`
+	Usage     []PropertiesContentObject `json:"usage"`
+	Reactions []PropertiesContentObject `json:"reactions"`
+}
 type ElementSectionResponse struct {
-	Array []ElementContentObject `json:"array"`
+	Array []PropertiesContentObject `json:"array"`
 }
 
-type ElementContentObject struct {
+type PropertiesContentObject struct {
 	Component string `json:"component"`
 	Content   string `json:"content"`
 }
