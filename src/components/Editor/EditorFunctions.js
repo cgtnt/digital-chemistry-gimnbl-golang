@@ -1,5 +1,4 @@
 function addComponent(type, setContent, content) {
-    console.log(content)
     const newContent = [...content]
     newContent.push({
         id: crypto.randomUUID(),
@@ -14,13 +13,13 @@ function addComponent(type, setContent, content) {
 
 function deleteComponent(id, setContent, content) {
     let newContent = [...content]
-    newContent = newContent.filter((component) => 
+    newContent = newContent.filter((component) =>
         component.id != id
     )
     setContent(newContent)
 }
 
-function moveComponent(id, direction, setContent, content){
+function moveComponent(id, direction, setContent, content) {
     const componentIndex = content.findIndex((component) => component.id == id)
     let newContent = [...content]
 
@@ -53,8 +52,26 @@ function editComponentContent(id, input, setContent, content) {
     setContent(newContent)
 }
 
-function savePage(name, generalContent, propertiesContent) {
-    console.log(name, generalContent, propertiesContent)
+async function savePage(name, generalContent, propertiesContent) {
+    try {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elements/${name}`, {
+            method: "POST",
+            body: JSON.stringify({
+                name: name,
+                generalProperties: generalContent,
+                specificProperties: propertiesContent
+            }),
+            headers: {
+                "Content-Type":"application/json"
+            }
+        })
+
+        const info = await res.json()
+        console.log(info)
+    } catch (err) {
+        console.log(err)
+    }
 }
+
 
 export { addComponent, deleteComponent, moveComponent, editComponentContent, savePage } 

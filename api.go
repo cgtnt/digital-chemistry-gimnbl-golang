@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -67,9 +68,29 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 		}
 
 		return fmt.Errorf("not found")
-
 	}
 
+	if r.Method == "POST" {
+		id := GetId(r)
+		fmt.Println(id)
+
+		if _, ok := s.elementsList[id]; !ok {
+			return fmt.Errorf("not found")
+		}
+
+		element := &Element{}
+		if err := json.NewDecoder(r.Body).Decode(element); err != nil {
+			log.Println("[CMS Create] Error: ", err)
+			return fmt.Errorf("bad request")
+		}
+
+		if err := s.store.CreateElement(element); err != nil {
+			log.Println("[CMS Create] Error: ", err)
+			return fmt.Errorf("failed saving element")
+		}
+
+		return WriteJSON(w, http.StatusCreated, map[string]string{"message": "element saved successfully"})
+	}
 	return fmt.Errorf("method not allowed %s", r.Method)
 }
 

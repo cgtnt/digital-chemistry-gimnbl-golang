@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -10,7 +11,9 @@ import (
 )
 
 type Storage interface {
-	GetByElement(string) (*Page, error)
+	GetElementByName(string) (*Element, error)
+	CreateElement(*Element) error
+	DeleteElementById(string) error
 }
 
 type PostgresStore struct {
@@ -36,41 +39,72 @@ func NewPostgresStore() (*PostgresStore, error) {
 }
 
 func (s *PostgresStore) Init() error {
-	return s.CreatePagesTable()
+	return s.CreateElementsTable()
 }
 
-func (s *PostgresStore) GetByElement(el string) (*Page, error) {
-	query := `select * from pages where element=$1`
+func (s *PostgresStore) CreateElement(el *Element) error {
+	s.DeleteElementById(el.Name)
+
+	query := `insert into elements (name, generalproperties, specificproperties) values ($1, $2, $3)`
+
+	generalProperties, err := json.Marshal(el.GeneralProperties)
+	if err != nil {
+		return err
+	}
+
+	specificProperties, err := json.Marshal(el.SpecificProperties)
+	if err != nil {
+		return err
+	}
+
+	if _, err := s.db.Exec(query, el.Name, generalProperties, specificProperties); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *PostgresStore) GetElementByName(el string) (*Element, error) {
+	query := `select * from elements where element=$1`
 	rows, err := s.db.Query(query, el)
 	if err != nil {
 		return nil, err
 	}
 
-	page, err := scanIntoPage(rows)
+	element, err := scanIntoElement(rows)
 	if err != nil {
 		return nil, err
 	}
 
-	return page, nil
+	return element, nil
 }
 
-func (s *PostgresStore) CreatePagesTable() error {
-	query := `create table if not exists pages (
-		id serial primary key,
-		element varchar(30),
-		content text 
+func (s *PostgresStore) DeleteElementById(el string) error {
+	query := `delete * from elements where element=$1`
+	_, err := s.db.Exec(query, el)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func scanIntoElement(rows *sql.Rows) (*Element, error) {
+	element := &Element{}
+
+	if err := rows.Scan(&element.Name, &element.GeneralProperties, &element.SpecificProperties); err != nil {
+		return nil, err
+	}
+
+	return element, nil
+}
+
+func (s *PostgresStore) CreateElementsTable() error {
+	query := `create table if not exists elements (
+		name text primary key,
+		generalproperties json,
+		specificproperties json
 	)`
 
 	_, err := s.db.Exec(query)
 	return err
-}
-
-func scanIntoPage(rows *sql.Rows) (*Page, error) {
-	page := &Page{}
-
-	if err := rows.Scan(&page.ID, &page.Element, &page.Content); err != nil {
-		return nil, err
-	}
-
-	return page, nil
 }

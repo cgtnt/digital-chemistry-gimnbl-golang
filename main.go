@@ -20,6 +20,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if err := store.Init(); err != nil {
+		log.Fatal(err)
+	}
+
 	fs := http.FileServer(http.Dir(os.Getenv("BUILD_PATH")))
 
 	elist := map[string]string{}
