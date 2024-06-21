@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -45,26 +46,22 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 		queryParams := GetQueryParams(r)
 		section := queryParams.Get("section")
 
+		element, err := s.store.GetElementByName(id)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				log.Println(err)
+				return err
+			}
+			log.Println(err)
+			return err
+		}
+
 		if section == "general" {
-			tmp := ElementGeneralResponse{Name: "vodonik", Symbol: "H", ImageSource: "/images/vodonik.jpg"}
-			return WriteJSON(w, http.StatusOK, tmp)
+			return WriteJSON(w, http.StatusOK, element.GeneralProperties)
 		}
 
 		if section == "properties" {
-			tmp := make([]PropertiesContentObject, 5)
-			for i := range tmp {
-				tmp[i].Component = "formula"
-				tmp[i].Content = "content lmao"
-			}
-
-			tmp2 := make([]PropertiesContentObject, 5)
-			for i := range tmp2 {
-				tmp2[i].Component = "formula"
-				tmp2[i].Content = "chemical lmao"
-			}
-
-			a := ElementPropertiesResponse{Physical: tmp, Chemical: tmp2, Usage: tmp, Reactions: tmp}
-			return WriteJSON(w, http.StatusOK, a)
+			return WriteJSON(w, http.StatusOK, element.SpecificProperties)
 		}
 
 		return fmt.Errorf("not found")
@@ -83,6 +80,9 @@ func (s *HTTPServer) handleElementRoute(w http.ResponseWriter, r *http.Request) 
 			log.Println("[CMS Create] Error: ", err)
 			return fmt.Errorf("bad request")
 		}
+
+		element.GeneralProperties.Name = id
+		element.GeneralProperties.Symbol = s.elementsList[id]
 
 		if err := s.store.CreateElement(element); err != nil {
 			log.Println("[CMS Create] Error: ", err)

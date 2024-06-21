@@ -7,27 +7,23 @@ import (
 type APIFunc func(w http.ResponseWriter, r *http.Request) error
 
 type Element struct {
-	Name               string                    `json:"name"`
-	GeneralProperties  ElementGeneralResponse    `json:"generalProperties"`
-	SpecificProperties ElementPropertiesResponse `json:"specificProperties"`
+	Name               string             `json:"name"`
+	GeneralProperties  GeneralProperties  `json:"generalProperties"`
+	SpecificProperties SpecificProperties `json:"specificProperties"`
 }
 
-type ElementGeneralResponse struct {
+type GeneralProperties struct {
 	Name        string `json:"name"`
 	Symbol      string `json:"symbol"`
 	ImageSource string `json:"imageSource"`
 }
 
-type ElementPropertiesResponse struct {
+type SpecificProperties struct {
 	Physical  []PropertiesContentObject `json:"physical"`
 	Chemical  []PropertiesContentObject `json:"chemical"`
 	Usage     []PropertiesContentObject `json:"usage"`
 	Reactions []PropertiesContentObject `json:"reactions"`
 }
-type ElementSectionResponse struct {
-	Array []PropertiesContentObject `json:"array"`
-}
-
 type PropertiesContentObject struct {
 	Id        string `json:"id"`
 	Component string `json:"component"`

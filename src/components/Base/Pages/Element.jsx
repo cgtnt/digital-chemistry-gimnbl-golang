@@ -31,8 +31,13 @@ export default function Element() {
             const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elements/${name}?section=general`)
 
             if (!res.ok) {
-                setHasError(true)
-                return
+                if (isEditor) {
+                    setGeneralContent({})
+                    return
+                } else {
+                    setHasError(true)
+                    return
+                }
             }
 
             const info = await res.json()
@@ -49,8 +54,13 @@ export default function Element() {
             const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elements/${name}?section=properties`)
 
             if (!res.ok) {
-                setHasError(true)
-                return
+                if (isEditor) {
+                    setPropertiesContent({physical:[], chemical:[], usage:[], reactions:[]})
+                    return
+                } else {
+                    setHasError(true)
+                    return
+                }
             }
 
             const info = await res.json()
@@ -71,7 +81,7 @@ export default function Element() {
     } else {
         return (
             <>
-                {isEditor && <Toolbar name={name} propertiesContent={propertiesContent} generalContent={generalContent}/>}
+                {isEditor && <Toolbar name={name} propertiesContent={propertiesContent} generalContent={generalContent} />}
                 <div className="container-element-page">
                     <Info generalContent={generalContent} setGeneralContent={setGeneralContent} />
 

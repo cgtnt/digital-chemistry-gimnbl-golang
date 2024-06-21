@@ -4,10 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	_ "github.com/lib/pq"
 	"log"
 	"os"
-
-	_ "github.com/lib/pq"
 )
 
 type Storage interface {
@@ -21,7 +20,7 @@ type PostgresStore struct {
 }
 
 func NewPostgresStore() (*PostgresStore, error) {
-	connStr := fmt.Sprintf("user=postgres dbname=postgres password=%s sslmode=disable", os.Getenv("DB_PASSWORD"))
+	connStr := fmt.Sprintf("user=postgres dbname=postgres password=%s sslmode=disable ", os.Getenv("DB_PASSWORD"))
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
@@ -45,7 +44,7 @@ func (s *PostgresStore) Init() error {
 func (s *PostgresStore) CreateElement(el *Element) error {
 	s.DeleteElementById(el.Name)
 
-	query := `insert into elements (name, generalproperties, specificproperties) values ($1, $2, $3)`
+	query := `insert into elements (name, generalproperties, specificproperties) values ($1, $2, $3);`
 
 	generalProperties, err := json.Marshal(el.GeneralProperties)
 	if err != nil {
@@ -65,13 +64,10 @@ func (s *PostgresStore) CreateElement(el *Element) error {
 }
 
 func (s *PostgresStore) GetElementByName(el string) (*Element, error) {
-	query := `select * from elements where element=$1`
-	rows, err := s.db.Query(query, el)
-	if err != nil {
-		return nil, err
-	}
+	query := `select * from elements where name=$1;`
+	row := s.db.QueryRow(query, el)
 
-	element, err := scanIntoElement(rows)
+	element, err := scanIntoElement(row)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +76,7 @@ func (s *PostgresStore) GetElementByName(el string) (*Element, error) {
 }
 
 func (s *PostgresStore) DeleteElementById(el string) error {
-	query := `delete * from elements where element=$1`
+	query := `delete from elements where name=$1;`
 	_, err := s.db.Exec(query, el)
 	if err != nil {
 		return err
@@ -88,10 +84,20 @@ func (s *PostgresStore) DeleteElementById(el string) error {
 	return nil
 }
 
-func scanIntoElement(rows *sql.Rows) (*Element, error) {
+func scanIntoElement(row *sql.Row) (*Element, error) {
 	element := &Element{}
+	generalPropsRaw := new([]uint8)
+	specificPropsRaw := new([]uint8)
 
-	if err := rows.Scan(&element.Name, &element.GeneralProperties, &element.SpecificProperties); err != nil {
+	if err := row.Scan(&element.Name, &generalPropsRaw, &specificPropsRaw); err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(*generalPropsRaw, &element.GeneralProperties); err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(*specificPropsRaw, &element.SpecificProperties); err != nil {
 		return nil, err
 	}
 
@@ -103,7 +109,7 @@ func (s *PostgresStore) CreateElementsTable() error {
 		name text primary key,
 		generalproperties json,
 		specificproperties json
-	)`
+	);`
 
 	_, err := s.db.Exec(query)
 	return err
