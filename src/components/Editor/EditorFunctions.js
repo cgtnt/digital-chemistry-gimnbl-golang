@@ -53,4 +53,8 @@ function editComponentContent(id, input, setContent, content) {
     setContent(newContent)
 }
 
-export { addComponent, deleteComponent, moveComponent, editComponentContent } 
+function savePage(name, generalContent, propertiesContent) {
+    console.log(name, generalContent, propertiesContent)
+}
+
+export { addComponent, deleteComponent, moveComponent, editComponentContent, savePage } 

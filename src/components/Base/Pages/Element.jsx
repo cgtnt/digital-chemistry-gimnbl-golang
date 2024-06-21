@@ -11,22 +11,22 @@ export default function Element() {
     const isEditor = useContext(EditorContext)
     const { name } = useParams()
 
-    const [generalInfo, setGeneralInfo] = useState()
+    const [generalContent, setGeneralContent] = useState()
     const [propertiesContent, setPropertiesContent] = useState()
     const [hasError, setHasError] = useState(false)
     const [activePanel, setActivePanel] = useState()
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const fetch1 = fetchGeneralInfo()
-        const fetch2 = fetchSpecificInfo()
+        const fetch1 = fetchGeneralContent()
+        const fetch2 = fetchPropertiesContent()
         Promise.all([fetch1, fetch2]).then(() => {
             setLoading(false)
             setActivePanel("physical")
         })
     }, [])
 
-    async function fetchGeneralInfo() {
+    async function fetchGeneralContent() {
         try {
             const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elements/${name}?section=general`)
 
@@ -37,14 +37,14 @@ export default function Element() {
 
             const info = await res.json()
             setHasError(false)
-            setGeneralInfo(info)
+            setGeneralContent(info)
         } catch (err) {
             console.log(err)
             setHasError(true)
         }
     }
 
-    async function fetchSpecificInfo() {
+    async function fetchPropertiesContent() {
         try {
             const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/elements/${name}?section=properties`)
 
@@ -71,13 +71,13 @@ export default function Element() {
     } else {
         return (
             <>
-                {isEditor && <Toolbar />}
+                {isEditor && <Toolbar name={name} propertiesContent={propertiesContent} generalContent={generalContent}/>}
                 <div className="container-element-page">
-                    <Info generalInfo={generalInfo} />
+                    <Info generalContent={generalContent} setGeneralContent={setGeneralContent} />
 
                     <PropertyButtons setActivePanel={setActivePanel} />
 
-                    <PropertiesBox setPropertiesContent= {setPropertiesContent} propertiesContent={propertiesContent} activePanel={activePanel} />
+                    <PropertiesBox setPropertiesContent={setPropertiesContent} propertiesContent={propertiesContent} activePanel={activePanel} />
                 </div>
             </>
         );

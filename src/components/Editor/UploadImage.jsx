@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-export default function UploadImage({ defaultSrc }) {
-    const [image, setImage] = useState("")
-
-    useEffect(() => {
-        setImage(defaultSrc)
-    }, [defaultSrc])
-
+export default function UploadImage({ generalContent, setGeneralContent }) {
     const uploadImage = (files) => {
         const formData = new FormData();
 
@@ -20,7 +14,9 @@ export default function UploadImage({ defaultSrc }) {
         )
             .then((response) => response.json())
             .then((data) => {
-                setImage(data.imageSource);
+                let newGeneralContent = {...generalContent}
+                newGeneralContent["imageSource"] = data.imageSource
+                setGeneralContent(newGeneralContent);
             });
     };
 
@@ -29,7 +25,7 @@ export default function UploadImage({ defaultSrc }) {
             <input type="file" onChange={(e) => uploadImage(e.target.files)} style={{position: "absolute", right: 0}}/>
 
             <img
-                src={image}
+                src={generalContent.imageSource}
                 alt="uploaded"
                 className="element-img"
                 style={{ objectFit: 'cover' }}

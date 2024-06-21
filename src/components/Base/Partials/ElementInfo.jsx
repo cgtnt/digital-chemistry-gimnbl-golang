@@ -2,7 +2,7 @@ import { EditorContext } from "../../Context/EditorContext";
 import { useContext } from "react";
 import UploadImage from "../../Editor/UploadImage"
 
-export default function Info({ generalInfo }) {
+export default function Info({ generalContent, setGeneralContent }) {
     const isEditor = useContext(EditorContext)
     return (
         <div className="element-image-wrapper">
@@ -10,15 +10,15 @@ export default function Info({ generalInfo }) {
                 <div className="hero-section-wrapper">
                     <div className="color-background">
                         <div className="element-wrapper">
-                            <h1 className="element-label" title="placeholder">{generalInfo?.symbol}</h1>
-                            <p className="element-name" title="placeholder">{generalInfo?.name}</p>
+                            <h1 className="element-label" title="placeholder">{generalContent?.symbol}</h1>
+                            <p className="element-name" title="placeholder">{generalContent?.name}</p>
                         </div>
                     </div>
                     <div className="img-wrapper">
                         {isEditor ? (
-                            <UploadImage defaultSrc={generalInfo?.imageSource} />
+                            <UploadImage generalContent={generalContent} setGeneralContent={setGeneralContent} />
                         ) : (
-                            <img className="element-img" src={generalInfo?.imageSource} style={{ objectFit: 'cover' }} />
+                            <img className="element-img" src={generalContent?.imageSource} style={{ objectFit: 'cover' }} />
                         )}
                     </div>
                 </div>
