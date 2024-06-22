@@ -13,7 +13,7 @@ func createJWT(account *AdminAccount) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       account.ID,
 		"username": account.Username,
-		"exp":      time.Now().Add(time.Second * 30).Unix(),
+		"exp":      time.Now().Add(time.Hour * 2).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
