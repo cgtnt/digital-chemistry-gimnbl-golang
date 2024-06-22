@@ -147,8 +147,8 @@ func (s *PostgresStore) CreateAccountsTable() error {
 	query := `create table if not exists admins (
 		id serial primary key, 
 		username varchar(50),
-		password_hash varchar(256),
-		created_at timestamp	
+		password_hash varchar(72),
+		created_at timestamp default current_timestamp
 	);`
 
 	_, err := s.db.Exec(query)

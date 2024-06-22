@@ -16,9 +16,9 @@ func createJWT(account *AdminAccount) (string, error) {
 		"exp":      time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	tokenString, err := token.SignedString(os.Getenv("JWT_SECRET"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
-		return "", fmt.Errorf("unauthorized")
+		return "", fmt.Errorf("failed creating token")
 	}
 
 	return tokenString, nil
@@ -28,13 +28,24 @@ func validateAccountLogin(acc *AdminAccount, pass string) error {
 	return bcrypt.CompareHashAndPassword([]byte(acc.PasswordHash), []byte(pass))
 }
 
-func verifyToken(tokenString string) (*jwt.Token, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return os.Getenv("JWT_SECRET"), nil
+func verifyToken(tokenString string, s Storage) (*jwt.Token, error) {
+	claims := jwt.MapClaims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 
 	if err != nil {
 		return nil, err
+	}
+
+	exp := int64(claims["exp"].(float64))
+	if exp <= time.Now().Unix() {
+		return nil, fmt.Errorf("expired token")
+	}
+
+	account, err := s.GetAccountByUsername(claims["username"].(string))
+	if account == nil || err != nil || int(claims["id"].(float64)) != account.ID {
+		return nil, fmt.Errorf("no account")
 	}
 
 	if !token.Valid {
@@ -55,27 +66,9 @@ func JWTMiddleware(handler http.HandlerFunc, s Storage) http.HandlerFunc {
 
 		tokenString = tokenString[len("Bearer "):]
 
-		token, err := verifyToken(tokenString)
+		_, err := verifyToken(tokenString, s)
 		if err != nil {
-			WriteJSON(w, http.StatusUnauthorized, "Invalid token")
-			return
-		}
-
-		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok {
-			WriteJSON(w, http.StatusUnauthorized, "Invalid token")
-			return
-		}
-
-		exp := claims["exp"].(int64)
-		if exp <= time.Now().Unix() {
-			WriteJSON(w, http.StatusUnauthorized, "Invalid token")
-			return
-		}
-
-		account, err := s.GetAccountByUsername(claims["username"].(string))
-		if account == nil || err != nil || claims["id"].(int) != account.ID {
-			WriteJSON(w, http.StatusUnauthorized, "Invalid token")
+			WriteJSON(w, http.StatusUnauthorized, err)
 			return
 		}
 

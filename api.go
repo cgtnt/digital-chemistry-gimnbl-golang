@@ -122,7 +122,7 @@ func (s *HTTPServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 
 	tokenString, err := createJWT(account)
 	if err != nil {
-		return fmt.Errorf("failed creating token")
+		return err
 	}
 
 	return WriteJSON(w, http.StatusOK, map[string]string{"token": tokenString})
