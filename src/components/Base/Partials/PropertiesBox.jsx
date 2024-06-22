@@ -16,7 +16,7 @@ export default function PropertiesBox({ propertiesContent, setPropertiesContent,
             setPropertiesContent(newPropertiesContent)
         }
         setContent(propertiesContent[activePanel])
-    }, [activePanel])
+    }, [activePanel, content])
 
     function JSONToComponents(array) {
         return array?.map((item) => {

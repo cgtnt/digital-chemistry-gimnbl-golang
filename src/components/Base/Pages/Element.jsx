@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, act } from 'react';
 import { useParams } from 'react-router-dom';
 import { NotFound } from './Errors';
 import Toolbar from '../../Editor/Toolbar';
@@ -85,7 +85,7 @@ export default function Element({setAuth}) {
                 <div className="container-element-page">
                     <Info generalContent={generalContent} setGeneralContent={setGeneralContent} setAuth={setAuth} />
 
-                    <PropertyButtons setActivePanel={setActivePanel} />
+                    <PropertyButtons setActivePanel={setActivePanel} activePanel={activePanel} />
 
                     <PropertiesBox setPropertiesContent={setPropertiesContent} propertiesContent={propertiesContent} activePanel={activePanel} />
                 </div>

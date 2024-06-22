@@ -90,11 +90,14 @@ func (s *HTTPServer) handleEditorRoute(w http.ResponseWriter, r *http.Request) e
 		element.GeneralProperties.Name = id
 		element.GeneralProperties.Symbol = s.elementsList[id]
 
+		log.Println("[CMS Create] Incoming element page: ", element)
+
 		if err := s.store.CreateElement(element); err != nil {
 			log.Println("[CMS Create] Error: ", err)
 			return fmt.Errorf("failed saving element")
 		}
 
+		log.Println("[CMS Create] Element saved succesfully")
 		return WriteJSON(w, http.StatusCreated, map[string]string{"message": "element saved successfully"})
 	}
 

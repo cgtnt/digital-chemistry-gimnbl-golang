@@ -29,7 +29,7 @@ export default function Login({setAuth}) {
   return (
     <>
       <main style={{ padding: '50px' }}>
-        <h1>Login </h1>
+        <h1>Editor</h1>
         <br />
 
         <form onSubmit={submitUser}>
@@ -51,7 +51,7 @@ export default function Login({setAuth}) {
           <br />
           <br />
 
-          <button type="submit">Uloguj se</button>
+          <button type="submit" className='button'>Uloguj se</button>
         </form>
       </main>
     </>
