@@ -10,7 +10,7 @@ function Formula({ id, children, setContent, content }) {
             <div contentEditable="true" onBlur={(c) => editComponentContent(id, c.currentTarget.textContent, setContent, content)}>{children}</div>
         </div>
     } else {
-        return <div>{children}</div>
+        return <div className="page-component">{children}</div>
     }
 }
 
@@ -22,7 +22,7 @@ function Paragraph({ children, id, setContent, content }) {
             <p contentEditable="true" onBlur={(c) => editComponentContent(id, c.currentTarget.textContent, setContent, content)}>{children}</p>
         </div>
     } else {
-        return <p>{children}</p>
+        return <p className="page-component">{children}</p>
     }
 }
 
@@ -34,7 +34,7 @@ function Heading({ children, id, setContent, content }) {
             <h1 contentEditable="true" onBlur={(c) => editComponentContent(id, c.currentTarget.textContent, setContent, content)}>{children}</h1>
         </div>
     } else {
-        return <h1>{children}</h1>
+        return <h1 className="page-component">{children}</h1>
     }
 }
 

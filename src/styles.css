@@ -66,6 +66,13 @@ img {
     box-shadow:  white 0px 0px 5px 1px;
 }
 
+.page-component {
+    margin-bottom: 10px;
+    position: relative;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
 .button:active{
     transition: 0s;
     background: #D6D3D3;

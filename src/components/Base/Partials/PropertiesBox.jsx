@@ -35,6 +35,7 @@ export default function PropertiesBox({ propertiesContent, setPropertiesContent,
 
     return (
         <div className="element-properties-wrapper" style={{
+            maxWidth: "100vw",
             paddingLeft: "5%",
             paddingRight: "5%",
             paddingTop: "3%",
