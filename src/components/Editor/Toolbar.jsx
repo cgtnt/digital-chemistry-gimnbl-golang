@@ -1,6 +1,6 @@
 import { savePage } from "./EditorFunctions";
 
-export default function Toolbar({name, generalContent, propertiesContent, setAuth, setStashedContent, stashedContent}) {
+export default function Toolbar({name, generalContent, propertiesContent, setAuth}) {
     return (
         <section style={{
             backgroundColor: "red",
@@ -14,7 +14,7 @@ export default function Toolbar({name, generalContent, propertiesContent, setAut
                 textAlign: "center",
                 padding: "3px"
             }}>
-                <button style={{margin: "2px"}} onClick={() => savePage(name, generalContent, propertiesContent, setAuth, setStashedContent, stashedContent)}>save</button>
+                <button style={{margin: "2px"}} onClick={() => savePage(name, generalContent, propertiesContent, setAuth)}>save</button>
                 <button onClick={() => {window.location.reload()}}>discard</button>
             </section>
         </section>

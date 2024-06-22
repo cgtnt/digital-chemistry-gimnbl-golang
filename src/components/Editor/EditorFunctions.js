@@ -1,4 +1,3 @@
-import { isExpired } from "react-jwt";
 function addComponent(type, setContent, content) {
     const newContent = [...content]
     newContent.push({
@@ -53,7 +52,7 @@ function editComponentContent(id, input, setContent, content) {
     setContent(newContent)
 }
 
-async function savePage(name, generalContent, propertiesContent, setAuth, setStashedContent, stashedContent) {
+async function savePage(name, generalContent, propertiesContent, setAuth) {
     try {
         const body = JSON.stringify({
             name: name,
@@ -63,10 +62,10 @@ async function savePage(name, generalContent, propertiesContent, setAuth, setSta
 
         const token = localStorage.getItem("jwt-token")
 
-        async function deliverContent(body) {
+        async function deliverContent() {
             const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/editor/elements/${name}`, {
                 method: "POST",
-                body: cont,
+                body: body,
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -79,9 +78,11 @@ async function savePage(name, generalContent, propertiesContent, setAuth, setSta
             if (res.ok) return true
         }
 
-        const success = await deliverContent(body)
+        const success = await deliverContent()
         if (!success) {
             setAuth(false)
+        } else {
+            alert("Element sačuvan")
         }
     } catch (err) {
         console.log(err)
