@@ -1,5 +1,6 @@
 .env
 .gitignore
+docker-compose.yml
 Makefile
 **/node_modules/
 public/
