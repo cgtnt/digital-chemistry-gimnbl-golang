@@ -6,6 +6,7 @@ import { isExpired } from "react-jwt";
 
 export default function Editor() {
     const [auth, setAuth] = useState(false)
+    const [stashedContent, setStashedContent] = useState()
 
     useEffect(() => {
         let token = localStorage.getItem("jwt-token")
@@ -21,7 +22,7 @@ export default function Editor() {
     return (
         <>
             <EditorContext.Provider value={true}>
-                {auth ? <Element /> : <Login setAuth={setAuth} />}
+                {auth ? <Element setAuth={setAuth} setStashedContent={setStashedContent} stashedContent={stashedContent}/> : <Login setAuth={setAuth} />}
             </EditorContext.Provider>
         </>
     );

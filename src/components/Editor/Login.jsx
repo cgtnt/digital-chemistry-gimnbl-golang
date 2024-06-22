@@ -36,7 +36,7 @@ export default function Login({setAuth}) {
           <input
             value={username}
             type="text"
-            placeholder="Username"
+            placeholder="Korisničko ime"
             onChange={(e) => setUsername(e.target.value)}
           />
           <br />
@@ -45,13 +45,13 @@ export default function Login({setAuth}) {
           <input
             value={password}
             type="password"
-            placeholder="Password"
+            placeholder="Šifra"
             onChange={(e) => setPassword(e.target.value)}
           />
           <br />
           <br />
 
-          <button type="submit">Login</button>
+          <button type="submit">Uloguj se</button>
         </form>
       </main>
     </>

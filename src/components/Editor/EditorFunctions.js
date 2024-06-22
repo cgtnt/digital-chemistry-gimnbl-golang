@@ -1,3 +1,4 @@
+import { isExpired } from "react-jwt";
 function addComponent(type, setContent, content) {
     const newContent = [...content]
     newContent.push({
@@ -52,22 +53,36 @@ function editComponentContent(id, input, setContent, content) {
     setContent(newContent)
 }
 
-async function savePage(name, generalContent, propertiesContent) {
+async function savePage(name, generalContent, propertiesContent, setAuth, setStashedContent, stashedContent) {
     try {
-        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/editor/elements/${name}`, {
-            method: "POST",
-            body: JSON.stringify({
-                name: name,
-                generalProperties: generalContent,
-                specificProperties: propertiesContent
-            }),
-            headers: {
-                "Content-Type":"application/json"
-            }
+        const body = JSON.stringify({
+            name: name,
+            generalProperties: generalContent,
+            specificProperties: propertiesContent
         })
 
-        const info = await res.json()
-        console.log(info)
+        const token = localStorage.getItem("jwt-token")
+
+        async function deliverContent(body) {
+            const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/editor/elements/${name}`, {
+                method: "POST",
+                body: cont,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+
+            const info = await res.json()
+            console.log(info)
+
+            if (res.ok) return true
+        }
+
+        const success = await deliverContent(body)
+        if (!success) {
+            setAuth(false)
+        }
     } catch (err) {
         console.log(err)
     }

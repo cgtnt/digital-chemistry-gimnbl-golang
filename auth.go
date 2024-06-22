@@ -13,7 +13,7 @@ func createJWT(account *AdminAccount) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       account.ID,
 		"username": account.Username,
-		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+		"exp":      time.Now().Add(time.Second * 30).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
@@ -60,7 +60,7 @@ func JWTMiddleware(handler http.HandlerFunc, s Storage) http.HandlerFunc {
 
 		tokenString := r.Header.Get("Authorization")
 		if tokenString == "" {
-			WriteJSON(w, http.StatusUnauthorized, "Missing auth header")
+			WriteJSON(w, http.StatusUnauthorized, APIError{Error: "missing auth header"})
 			return
 		}
 
@@ -68,7 +68,7 @@ func JWTMiddleware(handler http.HandlerFunc, s Storage) http.HandlerFunc {
 
 		_, err := verifyToken(tokenString, s)
 		if err != nil {
-			WriteJSON(w, http.StatusUnauthorized, err)
+			WriteJSON(w, http.StatusUnauthorized, APIError{Error: err.Error()})
 			return
 		}
 

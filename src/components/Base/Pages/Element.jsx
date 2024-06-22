@@ -7,7 +7,7 @@ import PropertyButtons from '../Partials/PropertyButtons';
 import Info from '../Partials/ElementInfo';
 import PropertiesBox from "../Partials/PropertiesBox"
 
-export default function Element() {
+export default function Element({setAuth, setStashedContent, stashedContent}) {
     const isEditor = useContext(EditorContext)
     const { name } = useParams()
 
@@ -81,7 +81,7 @@ export default function Element() {
     } else {
         return (
             <>
-                {isEditor && <Toolbar name={name} propertiesContent={propertiesContent} generalContent={generalContent} />}
+                {isEditor && <Toolbar name={name} propertiesContent={propertiesContent} generalContent={generalContent} setAuth={setAuth} setStashedContent={setStashedContent} stashedContent={stashedContent} />}
                 <div className="container-element-page">
                     <Info generalContent={generalContent} setGeneralContent={setGeneralContent} />
 
