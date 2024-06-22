@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"github.com/joho/godotenv"
 	"io"
 	"log"
@@ -10,9 +11,15 @@ import (
 )
 
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal(err)
+	prod := flag.Bool("prod", false, "app in production")
+
+	flag.Parse()
+
+	if !*prod {
+		err := godotenv.Load(".env")
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	store, err := NewPostgresStore()
