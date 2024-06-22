@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"github.com/joho/godotenv"
 	"io"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {

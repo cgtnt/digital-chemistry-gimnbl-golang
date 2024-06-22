@@ -14,7 +14,7 @@ function addComponent(type, setContent, content) {
 function deleteComponent(id, setContent, content) {
     let newContent = [...content]
     newContent = newContent.filter((component) =>
-        component.id != id
+        component.id !== id
     )
     setContent(newContent)
 }
@@ -23,16 +23,16 @@ function moveComponent(id, direction, setContent, content) {
     const componentIndex = content.findIndex((component) => component.id === id)
     let newContent = [...content]
 
-    if (direction == "up") {
-        if (componentIndex == 0) return
+    if (direction === "up") {
+        if (componentIndex === 0) return
 
         let tmp = content[componentIndex - 1]
         newContent[componentIndex - 1] = content[componentIndex]
         newContent[componentIndex] = tmp
     }
 
-    if (direction == "down") {
-        if (componentIndex == (content.length - 1)) return
+    if (direction === "down") {
+        if (componentIndex === (content.length - 1)) return
 
         let tmp = content[componentIndex + 1]
         newContent[componentIndex + 1] = content[componentIndex]
@@ -44,7 +44,7 @@ function moveComponent(id, direction, setContent, content) {
 }
 
 function editComponentContent(id, input, setContent, content) {
-    const componentIndex = content.findIndex((component) => component.id == id)
+    const componentIndex = content.findIndex((component) => component.id === id)
     let newContent = [...content]
 
     newContent[componentIndex].content = input

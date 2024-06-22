@@ -83,7 +83,7 @@ export default function Element({setAuth}) {
             <>
                 {isEditor && <Toolbar name={name} propertiesContent={propertiesContent} generalContent={generalContent} setAuth={setAuth} />}
                 <div className="container-element-page">
-                    <Info generalContent={generalContent} setGeneralContent={setGeneralContent} />
+                    <Info generalContent={generalContent} setGeneralContent={setGeneralContent} setAuth={setAuth} />
 
                     <PropertyButtons setActivePanel={setActivePanel} />
 
