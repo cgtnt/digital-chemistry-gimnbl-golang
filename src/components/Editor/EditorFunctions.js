@@ -20,7 +20,7 @@ function deleteComponent(id, setContent, content) {
 }
 
 function moveComponent(id, direction, setContent, content) {
-    const componentIndex = content.findIndex((component) => component.id == id)
+    const componentIndex = content.findIndex((component) => component.id === id)
     let newContent = [...content]
 
     if (direction == "up") {
