@@ -17,7 +17,7 @@ func main() {
 	flag.Parse()
 
 	if !*prod {
-		err := godotenv.Load(".env")
+		err := godotenv.Load(".env.dev")
 		if err != nil {
 			log.Fatal(err)
 		}
