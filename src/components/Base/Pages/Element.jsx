@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, act } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { NotFound } from './Errors';
 import Toolbar from '../../Editor/Toolbar';
@@ -6,6 +6,7 @@ import { EditorContext } from '../../Context/EditorContext';
 import PropertyButtons from '../Partials/PropertyButtons';
 import Info from '../Partials/ElementInfo';
 import PropertiesBox from "../Partials/PropertiesBox"
+import ElementLoading from './LoadingSkeleton';
 
 export default function Element({setAuth}) {
     const isEditor = useContext(EditorContext)
@@ -77,7 +78,7 @@ export default function Element({setAuth}) {
     }
 
     if (loading) {
-        return <h1>Loading...</h1>
+        return <ElementLoading/>
     } else {
         return (
             <>
