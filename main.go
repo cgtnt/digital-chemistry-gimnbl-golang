@@ -32,7 +32,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fs := http.FileServer(http.Dir(os.Getenv("BUILD_PATH")))
+	fs := http.FileServer(http.Dir(os.Getenv("PUBLIC_FILE_PATH")))
 
 	elist := map[string]string{}
 

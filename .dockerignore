@@ -3,8 +3,6 @@
 docker-compose.yml
 Makefile
 **/node_modules/
-public/
-src/
 .git
 npm-debug.log
 .coverage

@@ -133,7 +133,7 @@ func (s *HTTPServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 
 func (s *HTTPServer) serveFile(w http.ResponseWriter, r *http.Request) error {
 	if r.URL.Path != "/" {
-		fullPath := os.Getenv("BUILD_PATH") + "/" + strings.TrimPrefix(path.Clean(r.URL.Path), "/")
+		fullPath := os.Getenv("PUBLIC_FILE_PATH") + "/" + strings.TrimPrefix(path.Clean(r.URL.Path), "/")
 		_, err := os.Stat(fullPath)
 		if err != nil {
 			if !os.IsNotExist(err) {
