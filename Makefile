@@ -1,10 +1,15 @@
-build:	
-	@go build -o dist/app
-	@cp -a ./dist/client/build/images/. ./public/images/
-	@npm run build
-	@rm -r ./public/images
-	@cp ./elementi.json ./dist/elementi.json
+build:
+	@cd backend; \
+	go build -o ../dist/app;
+	@mkdir -p dist/client/build/images
+	@cp -a dist/client/build/images/. frontend/public/images/;
+	@cp .env.dev frontend/.env
+	@cd frontend; \
+	npm run build;
+	@rm frontend/.env
+	@rm -r frontend/public/images
+	@cp elementi.json dist/elementi.json
 run: build
 	@./dist/app
-test:
-	@go test -v ./...
+start:
+	@./dist/app

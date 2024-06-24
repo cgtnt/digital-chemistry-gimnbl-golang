@@ -2,10 +2,8 @@ FROM golang:1.22.4-alpine
 
 WORKDIR /usr/src
 
-COPY go.mod go.sum ./
+COPY backend/ ./
 RUN go mod download && go mod verify
-
-COPY *.go .
 
 RUN go build -o /usr/dist/app 
 
@@ -13,9 +11,10 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/
 
-COPY src/ ./src/
-COPY public/ ./public/
-COPY package*.json ./
+COPY frontend/src/ ./src/
+COPY frontend/public/ ./public/
+COPY frontend/package*.json ./
+COPY .env .env
 
 RUN npm i
 RUN npm run build
