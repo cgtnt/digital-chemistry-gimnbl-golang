@@ -9,10 +9,13 @@ export default function Login({setAuth}) {
     event.preventDefault()
     fetch(`${process.env.REACT_APP_API_BASE_URL}/api/login`, {
       method: "POST",
+      body: JSON.stringify({ 
+        username: username,
+        password: password 
+      }),
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, password }),
     })
       .then((res) => res.json())
       .then((data) => {
