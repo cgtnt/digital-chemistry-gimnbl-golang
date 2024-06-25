@@ -7,7 +7,7 @@ function Formula({ id, children, setContent, content }) {
     if (isEditor) {
         return <div>
             <ManipulationButtons id={id} setContent={setContent} content={content} >
-                <div contentEditable="true" onBlur={(c) => editComponentContent(id, c.currentTarget.textContent, setContent, content)}>{children}</div>
+                <div contentEditable="true" className="page-component" onBlur={(c) => editComponentContent(id, c.currentTarget.textContent, setContent, content)}>{children}</div>
             </ManipulationButtons>
         </div>
     } else {
@@ -20,7 +20,7 @@ function Paragraph({ children, id, setContent, content }) {
     if (isEditor) {
         return <div>
             <ManipulationButtons id={id} setContent={setContent} content={content}>
-                <p contentEditable="true" onBlur={(c) => editComponentContent(id, c.currentTarget.textContent, setContent, content)}>{children}</p>
+                <p contentEditable="true" className="page-component" onBlur={(c) => editComponentContent(id, c.currentTarget.textContent, setContent, content)}>{children}</p>
             </ManipulationButtons>
         </div>
     } else {
@@ -33,7 +33,7 @@ function Heading({ children, id, setContent, content }) {
     if (isEditor) {
         return <div>
             <ManipulationButtons id={id} setContent={setContent} content={content}>
-                <h1 contentEditable="true" onBlur={(c) => editComponentContent(id, c.currentTarget.textContent, setContent, content)}>{children}</h1>
+                <h1 contentEditable="true" className="page-component" onBlur={(c) => editComponentContent(id, c.currentTarget.textContent, setContent, content)}>{children}</h1>
             </ManipulationButtons>
         </div>
     } else {
@@ -42,15 +42,17 @@ function Heading({ children, id, setContent, content }) {
 }
 
 function ManipulationButtons({ id, setContent, content, children }) {
-    return <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <div style={{ justifyContent: "center", display: "flex", flexDrection: "column", alignItems: "flex-start", marginRight: "20px", WebkitFlexDirection: "column" }}>
+    return <div className="grid-container">
+        <div className="left-buttons">
             <button style={{ marginBottom: "10px", border: "none", cursor: "pointer", background: "none", width: "30px", height: "10px" }} onClick={() => moveComponent(id, "up", setContent, content)}><img src={process.env.REACT_APP_API_BASE_URL + "/icons/arrow-up-icon.png"} /></button>
             <button style={{ marginTop: "10px", border: "none", cursor: "pointer", background: "none", width: "30px", height: "10px" }} onClick={() => moveComponent(id, "down", setContent, content)}><img src={process.env.REACT_APP_API_BASE_URL + "/icons/arrow-down-icon.png"} /></button>
         </div>
-        <div style={{ position: "relative", flexGrow: "1" }}>
+        <div className="contentEditableDiv">
             {children}
         </div>
-        <button style={{ marginLeft: "20px", border: "none", cursor: "pointer", background: "none", width: "30px", height: "25px" }} onClick={() => deleteComponent(id, setContent, content)}><img src={process.env.REACT_APP_API_BASE_URL + "/icons/trash-icon.png"} /></button>
+        <div className="right-button">
+            <button style={{ marginLeft: "20px", minWidth: 0, border: "none", cursor: "pointer", background: "none", width: "30px", height: "25px" }} onClick={() => deleteComponent(id, setContent, content)}><img src={process.env.REACT_APP_API_BASE_URL + "/icons/trash-icon.png"} /></button>
+        </div>
     </div>
 }
 

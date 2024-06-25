@@ -8,14 +8,18 @@ export default function Toolbar({name, generalContent, propertiesContent, setAut
             bottom: 0,
             width: "100%",
             zIndex: 5,
+            display: "flex",
+            padding: "5px",
+            justifyContent: "space-between",
+            alignItems: "center"
         }}>
-            <h3 style={{position: "absolute"}}>U edit modu</h3>
+            <h3>EDIT MODE</h3>
+            <p style={{flexGrow: 1, marginLeft:"30px"}}>Izmjene koje napravite će biti vidjlive na stranici</p>
             <section style={{
                 textAlign: "center",
-                padding: "3px"
             }}>
-                <button style={{margin: "2px"}} onClick={() => savePage(name, generalContent, propertiesContent, setAuth)}>save</button>
-                <button onClick={() => {window.location.reload()}}>discard</button>
+                <button className="button" style={{marginRight: "10px"}} onClick={() => savePage(name, generalContent, propertiesContent, setAuth)}>Sačuvaj</button>
+                <button className="button" style={{marginRight: "10px"}} onClick={() => {window.location.reload()}}>Odbaci</button>
             </section>
         </section>
     );

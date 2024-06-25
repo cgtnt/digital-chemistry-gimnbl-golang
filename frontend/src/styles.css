@@ -83,6 +83,28 @@ img {
     position: relative;
     max-width: 100%;
     word-wrap: break-word;
+    word-break: break-all;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: auto 1fr auto; /* Left section, middle section, right section */
+    grid-gap: 10px; /* Adjust gap between grid items */
+    align-items: center; /* Align items vertically in grid */
+    width: 100%; /* Full width of parent */
+    border: 1px solid #ccc; /* Optional: for visualization */
+    padding: 10px; /* Adjust padding as needed */
+}
+
+.left-buttons, .right-button {
+    display: flex;
+    flex-direction: column;
+}
+
+.contentEditableDiv {
+    grid-column: 2 / 3; /* Middle section spans second column */
+    border: 1px solid #ccc; /* Optional: for visualization */
+    padding: 8px; /* Adjust padding as needed */
 }
 
 .button:active{
