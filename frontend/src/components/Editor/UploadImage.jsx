@@ -36,7 +36,31 @@ export default function UploadImage({ generalContent, setGeneralContent, setAuth
 
     return (
         <>
-            <input type="file" onChange={(e) => uploadImage(e.target.files)} style={{ position: "absolute", right: 0 }} />
+            <div style={{
+                position: "absolute",
+                width: "15%",
+                height: "50%",
+                right: "10%",
+                top: "15%",
+                textAlign: "center",
+                backgroundColor: "black",
+                zIndex: "5",
+                padding: "30px",
+                opacity: "50%",
+                borderRadius: "10px"
+
+            }}>
+                <h3>Izaberi sliku</h3>
+                <br />
+                <br />
+                <label htmlFor="img-input">
+                    <img src={process.env.REACT_APP_API_BASE_URL+"/icons/upload-round-icon.png"} alt="Upload image" style={{width: "90px", height: "90px"}}/>
+                </label>
+                <input type="file" id="img-input" onChange={(e) => uploadImage(e.target.files)} style={{ display: "none" }}/>
+                <br />
+                <br />
+                <p>Slika mora biti .jpg i ispod 20mb</p>
+            </div>
 
             <img
                 src={generalContent.imageSource}
